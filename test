@@ -1,0 +1,31 @@
+<html><head><title>Making generative art with large language models</title><style>body {
+  font-family: Arial, sans-serif;
+  max-width: 800px; 
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+a {
+  color: #1a73e8;
+}
+</style></head><body>
+<h1>Making generative art with large language models</h1>
+
+<p>Co-authors:</p>
+
+<p>Ophira (<a href="https://twitter.com/AiTechnoPagan">@AiTechnoPagan</a>) is an artist, researcher, and jailbreaker.<br>
+Egg Syntax has a history of creating generative art, but is now focused on AI safety research.<br>
+&lt;author contributions statement&gt;<br>
+Thank you to the people who were kind enough to offer feedback on this post (in alphabetical order): Anna Shive, Josh Turner, Katan'Hya, Kat Winter, Nat, and Rob Haisfield.</p>
+
+</body></html>
