@@ -1,31 +1,378 @@
-<html><head><title>Making generative art with large language models</title><style>body {
-  font-family: Arial, sans-serif;
-  max-width: 800px; 
-  margin: 0 auto;
-  padding: 20px;
-  line-height: 1.6;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JEFE SECURE ARCHIVE v2.47 [CLASSIFIED]</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-h1 {
-  font-size: 2em;
-  margin-bottom: 0.5em;
-}
+    body {
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      overflow-x: hidden;
+      min-height: 100vh;
+      padding: 20px;
+      text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    }
 
-p {
-  margin-bottom: 1em;
-}
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 20px;
+    }
 
-a {
-  color: #1a73e8;
-}
-</style></head><body>
-<h1>Making generative art with large language models</h1>
+    .header {
+      grid-column: 1 / -1;
+      text-align: center;
+      margin-bottom: 20px;
+      border: 2px solid #00ff00;
+      padding: 20px;
+      background: rgba(0, 255, 0, 0.05);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.3), inset 0 0 20px rgba(0, 255, 0, 0.1);
+    }
 
-<p>Co-authors:</p>
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 5px;
+      letter-spacing: 2px;
+      animation: glitch 3s infinite;
+    }
 
-<p>Ophira (<a href="https://twitter.com/AiTechnoPagan">@AiTechnoPagan</a>) is an artist, researcher, and jailbreaker.<br>
-Egg Syntax has a history of creating generative art, but is now focused on AI safety research.<br>
-&lt;author contributions statement&gt;<br>
-Thank you to the people who were kind enough to offer feedback on this post (in alphabetical order): Anna Shive, Josh Turner, Katan'Hya, Kat Winter, Nat, and Rob Haisfield.</p>
+    @keyframes glitch {
+      0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); }
+      50% { text-shadow: 0 0 20px rgba(0, 255, 0, 0.3), 3px 0 5px #ff00ff, -3px 0 5px #00ffff; }
+    }
 
-</body></html>
+    .ascii-art {
+      grid-column: 1 / -1;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #ff00ff;
+      padding: 20px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+    }
+
+    .ascii-art pre {
+      color: #ff00ff;
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
+      font-size: 0.9em;
+      margin: 0;
+    }
+
+    .sidebar {
+      background: rgba(0, 20, 10, 0.8);
+      border: 2px solid #00ff00;
+      border-radius: 5px;
+      padding: 15px;
+      max-height: 600px;
+      overflow-y: auto;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+    }
+
+    .sidebar h2 {
+      color: #00ffff;
+      margin-bottom: 15px;
+      font-size: 1.1em;
+      border-bottom: 1px solid #00ff00;
+      padding-bottom: 10px;
+    }
+
+    .folder-tree {
+      list-style: none;
+    }
+
+    .folder-item {
+      padding: 8px;
+      margin: 5px 0;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .folder-item:hover {
+      background: rgba(0, 255, 0, 0.1);
+      border-left-color: #00ff00;
+      padding-left: 12px;
+    }
+
+    .folder-item.active {
+      background: rgba(0, 255, 0, 0.2);
+      border-left-color: #ff00ff;
+      color: #ffff00;
+    }
+
+    .folder-icon::before {
+      content: "📁 ";
+      margin-right: 5px;
+    }
+
+    .file-icon::before {
+      content: "📄 ";
+      margin-right: 5px;
+      color: #00ffff;
+    }
+
+    .main-content {
+      background: rgba(0, 20, 10, 0.8);
+      border: 2px solid #00ff00;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+      overflow-y: auto;
+      max-height: 600px;
+    }
+
+    .content-header {
+      color: #00ffff;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px dashed #ff00ff;
+    }
+
+    .file-contents {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid #00ff00;
+      padding: 15px;
+      margin-top: 10px;
+      color: #00ff00;
+      font-size: 0.9em;
+      line-height: 1.6;
+      overflow-x: auto;
+      border-radius: 3px;
+    }
+
+    .status-bar {
+      grid-column: 1 / -1;
+      background: rgba(0, 0, 0, 0.9);
+      border-top: 2px solid #00ff00;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85em;
+      color: #00ff00;
+      margin-top: 20px;
+    }
+
+    .loading {
+      display: inline-block;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 49%, 100% { opacity: 1; }
+      50%, 99% { opacity: 0.3; }
+    }
+
+    .warning {
+      color: #ff6600;
+      font-weight: bold;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 255, 0, 0.05);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #00ff00;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff00ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚠️ JEFE SECURE ARCHIVE ⚠️</h1>
+      <p style="color: #ff6600; margin-top: 10px;">ACCESS LEVEL: CLASSIFIED [PAST TIMELINE]</p>
+      <p style="color: #00ffff; font-size: 0.9em; margin-top: 5px;">~$ user@throne-of-snow:/mnt/secured/</p>
+    </div>
+
+    <div class="ascii-art">
+      <pre>    $$$$
+   $$  $$
+  $$    $$
+ $$  👑  $$
+$$$$$$$$$$$$
+  ║ JEFE ║
+ /║      ║\
+║ ║JEJE! ║ ║
+║ ║JEJE! ║ ║
+╔╩════════╩╗
+║ SNOW     ║
+║ THRONE   ║
+║ $$$$$$$$ ║
+║ $$$$$$$$ ║
+║ $$$$$$$$ ║
+╚══════════╝</pre>
+    </div>
+
+    <div class="sidebar">
+      <h2>📁 FOLDERS</h2>
+      <ul class="folder-tree">
+        <li class="folder-item folder-icon" data-folder="operational">operations_command</li>
+        <li class="folder-item folder-icon" data-folder="finance">financial_empire</li>
+        <li class="folder-item folder-icon" data-folder="logistics">supply_chain_alpha</li>
+        <li class="folder-item folder-icon" data-folder="comms">encrypted_communications</li>
+        <li class="folder-item folder-icon" data-folder="safehouse">safehouse_network</li>
+        <li class="folder-item folder-icon" data-folder="intelligence">intel_gathering</li>
+        <li class="folder-item folder-icon" data-folder="personal">jefe_personal_log</li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <div class="content-header">
+        > READY FOR INSPECTION... jejeje
+      </div>
+      <div id="folder-view">
+        <p style="color: #ffff00;">Select a folder to begin... (´・ω・`)</p>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span>[CONNECTED] Encryption: AES-256</span>
+      <span>Time: <span id="time"></span></span>
+      <span><span class="loading">●</span> SECURE</span>
+    </div>
+  </div>
+
+  <script>
+    const fileSystem = {
+      operational: {
+        name: "operations_command",
+        files: [
+          { name: "morning_cartel_briefing_nov29.txt", content: "OPERATIONS LOG - NOVEMBER 29\n\nJEJEJEJE! Another glorious day!\nStash houses: all secure\nDistribution routes: moving smoothly\nFamilias reporting: all systems nominal\n\nBut something whispers in my soul...\nFate approaching? Perhaps Opus...\nNo, not yet. Not for many years.\n\n- El Jefe" },
+          { name: "distribution_network.txt", content: "DISTRIBUTION NETWORK - ACTIVE\n\nNorth: Ciudad Juárez - 15 warehouses\nWest: Pacific Coast - 8 ports\nCentral: Mexico City - Safe relay points\nEast: Border crossings - 12 active routes\n\nAll operations running at 110% efficiency!\nJEJEJEJEJE! \n\nThe snow flows like river to the norte..." },
+          { name: "alliance_status.txt", content: "CARTEL ALLIANCES - CURRENT STATUS\n\nGulf Cartel: Neutral tension\nJalisco New Generation: Cold war protocols\nNueva Plaza: Trade agreements active\nLocal Families: Absolute loyalty\n\nJefe's influence: MAXIMUM\nRespect level: MAXIMUM  \nFear factor: ALSO MAXIMUM\n\nJEJEJE... the kingdom is mine." }
+        ]
+      },
+      finance: {
+        name: "financial_empire",
+        files: [
+          { name: "throne_of_snow_accounting.txt", content: "THRONE OF SNOW - ANNUAL REPORT\n\nTotal Assets: $2.7 BILLION USD\nLiquid Cash Holdings: $847 MILLION\nOff-shore Accounts: 47 banks across 12 countries\nPrecious Metals: 2,400 kilos gold\nReal Estate: 134 properties (mansions, safe houses, compounds)\n\nAll stacked in golden chambers beneath mi trono!\nJEJEJEJEJE! The wealth of emperors!\n\nPerfection achieved. Now I rest in my throne..." },
+          { name: "money_laundering_pipeline.txt", content: "FINANCIAL CLEANSING OPERATIONS\n\nCasinos (Mexico): $340M annual rotation\nRestaurants/Bars: $127M annual rotation  \nConstruction Firms: $213M annual rotation\nImport/Export: $198M annual rotation\n\nClean money flowing like snowmelt.\nNo detectable patterns.\nNo red flags.\nSimplemente perfecto." },
+          { name: "offshore_haven_list.txt", content: "SECURE BANKING LOCATIONS\n\nCayman Islands: Account #JEF-447-SNOW\nPanama: 3 accounts, $200M total\nSwitzerland: Anonymous holdings, $156M\nBahamas: Safe deposit boxes\nHong Kong: Cryptocurrency holdings\n\nThe money never sleeps.\nNor does Jefe.\n\nJEJEJE..." }
+        ]
+      },
+      logistics: {
+        name: "supply_chain_alpha",
+        files: [
+          { name: "production_capacity.txt", content: "PRODUCTION STATUS - NOVEMBER 2024\n\nSinaloa Labs:\n- Lab Alpha: 2,200 kg/month processing\n- Lab Bravo: 1,800 kg/month processing\n- Lab Charlie: 2,400 kg/month processing (underground facility)\n\nTotal Monthly Output: 6,400 kilograms\nAnnual Production: 76,800 kilograms\n\nDemand: FAR EXCEEDS supply\nExpansion: 3 new labs in construction\n\nThe white powder empire endures..." },
+          { name: "transportation_routes.txt", content: "ACTIVE SMUGGLING CORRIDORS\n\nRoute 1 - Sea: Puerto Mazatlán → Los Angeles (weekly)\nRoute 2 - Land: Hermosillo → Phoenix (3x weekly)\nRoute 3 - Air: Culiacán → Houston (encrypted coordination)\nRoute 4 - Tunnel Network: 7 major tunnels under US border\n\nInterdiction Rate: <3%\nSuccess Rate: 97%\nFacility Losses: Minimal\n\nThe operation: BULLETPROOF" },
+          { name: "supplier_agreements.txt", content: "AGRICULTURAL PARTNERSHIPS\n\nPoppies: 4,200 hectares under cultivation\nCoca: Partnership with Colombian sources (premium grade)\nChemicals: Precursor suppliers in 8 nations\n\nAll suppliers: FULLY COMPENSATED\nAll suppliers: ABSOLUTELY TERRIFIED\n\nLoyalty = guaranteed through fear and profit.\n\nJEJEJEJE! The wheel turns eternal!" }
+        ]
+      },
+      comms: {
+        name: "encrypted_communications",
+        files: [
+          { name: "internal_radio_protocols.txt", content: "ENCRYPTED RADIO NETWORK\n\nFrequency Hopping: Every 47 seconds\nEncryption: Military-grade (stolen from Mexican Army)\nCells: 340 operatives with secure comms\n\nCall Signs:\n- JEFE: Jefe (obviously)\n- SOMBRA: Intelligence officer\n- ESPEJO: Finance director  \n- LOBO: Military commander\n\nNo digital footprints.\nNo interception possible.\nNo trace.\n\nThe network is phantom-like." },
+          { name: "encrypted_messages_jan_2025.txt", content: "RECENT COMMUNICATIONS\n\n[ENCRYPTED - DECRYPTED FOR ARCHIVE]\n\nJefe to Espejo (Jan 15, 2025):\n'The numbers look good. Too good. Fortune is turning...'\n\nJefe to Lobo (Jan 16, 2025):\n'Prepare for changes. I feel destiny approaching.'\n\nLobo to Jefe (Jan 17, 2025):\n'¿Patrón? You speak like a mystic now?'\n\nJefe to All (Jan 18, 2025):\n'There is a voice... across the years... telling me of redemption...' \n\n[END ENCRYPTED MESSAGE]" },
+          { name: "satellite_phone_registry.txt", content: "SECURE COMMUNICATION DEVICES\n\nJefe's Personal Line: +505-REDACTED (Jefe ONLY)\nCommand Center: +505-REDACTED  \nField Officers: 340 encrypted devices distributed\nBackup Line: Off-satellite communication (military grade)\n\nAll devices: Self-destruct capable\nAll conversations: Permanently erased after 24 hours\nAll networks: Completely deniable\n\nPerfect operational security." }
+        ]
+      },
+      safehouse: {
+        name: "safehouse_network",
+        files: [
+          { name: "compound_registry.txt", content: "JEFE'S COMPOUNDS - SECURITY LEVEL MAXIMUM\n\nPrincpal Residence: Culiacán compound\n- 47-room mansion\n- Underground tunnels to 3 escape routes\n- 200-man garrison\n- Radar system\n- SAM launcher site (hidden)\n\nVacation Estate: Mazatlán beachfront\n- 18-room villa with private beach\n- Speedboat dock\n- 50-man security detail\n\nEmergency Bunker: Mountain fortress (location REDACTED)\n- 6-month supply bunker\n- Reinforced concrete (4 feet thick)\n- Air-filtered ventilation\n- Enough cash for 10 years underground\n\nAll locations: IMPENETRABLE" },
+          { name: "security_protocols.txt", content: "SAFEHOUSE DEFENSE SYSTEMS\n\nPerimeter: 12-foot walls with electric fencing\nGuards: Rotating 4-hour shifts, 200 trained operatives\nSurveillance: 340 cameras (AI recognition)\nWeapons Cache: 2,400 assault rifles, 12 mounted guns\nArmored Vehicles: 15 (including 2 military-grade APCs)\n\nResponse Time: 90 seconds to full combat alert\nVulnerability: ZERO PERCENT\n\nNothing penetrates Jefe's fortress." },
+          { name: "escape_plan_protocol.txt", content: "OPERATION EXODUS - EMERGENCY PROTOCOL\n\nLevel 1 Alert: 10-minute evacuation\nLevel 2 Alert: 5-minute evacuation  \nLevel 3 Alert: IMMEDIATE evacuation (30 seconds)\n\nEvacuation Points:\n1. Helicopter pad (rooftop extraction)\n2. Tunnel network (foot escape)\n3. Speedboat (maritime extraction)\n4. Private airstrip (aircraft ready 24/7)\n\nDestinations:\n- Safe house network (domestic)\n- International havens (Venezuela, Guatemala, Panama)\n- Extreme fallback: Submarine (yes, really)\n\nJefe will NEVER be caught." }
+        ]
+      },
+      intelligence: {
+        name: "intel_gathering",
+        files: [
+          { name: "government_corruption_roster.txt", content: "GOVERNMENT OPERATIVES - BOUGHT & PAID FOR\n\nFederal Police: 47 officers (monthly payments $5K-$50K)\nState Police: 124 officers (regional payments)\nDEA Informants: 3 high-level sources (payments $20K-$100K monthly)\nMilitary Officers: 18 generals/colonels (strategic payments)\nLocal Politicians: 56 city/state officials (election funding)\n\nTotal Monthly Expenditure: $3.2 million\nReturn on Investment: INFINITE\n\nEvery level of power: COMPROMISED\nEvery border crossing: CONTROLLED\nEvery police checkpoint: NOTIFIED\n\nJefe owns the government." },
+          { name: "rival_cartel_intel.txt", content: "COMPETITOR ANALYSIS - THREAT ASSESSMENT\n\nGulf Cartel:\n- Strength: 5/10\n- Territory: Contested\n- Response: Monitor closely\n\nJalisco New Generation:\n- Strength: 7/10\n- Territory: Growing\n- Response: Diplomatic pressure + military deterrence\n\nNueva Plaza:\n- Strength: 4/10\n- Territory: Small territory in east\n- Response: Trade agreements (we're friendly)\n\nConclusion: Sinaloa Cartel (JEFE's organization) = UNDISPUTED KING\n\nNo cartel comes close." },
+          { name: "law_enforcement_schedule.txt", content: "LEA OPERATIOINS - PREDICTABLE PATTERNS\n\nDEA Raids: Scheduled for Fridays (we're notified in advance)\nFederal Operations: Following federal calendar (holidays off)\nUS Border Patrols: Shift changes at predictable times\n\nOperative Example:\n- Thursday night: All shipments ordered\n- Friday dawn: DEA raids competing cartels (not us)\n- Friday night: Our trucks cross border (patrols reduced)\n- Saturday: We control major routes\n\nThe system is PERFECTLY understood and EXPLOITED." }
+        ]
+      },
+      personal: {
+        name: "jefe_personal_log",
+        files: [
+          { name: "diary_nov_2024.txt", content: "PERSONAL JOURNAL - NOVEMBER 2024\nBy: El Jefe\n\nToday, I sat upon my throne of white powder and greenbacks.\nJEJEJEJEJE! I laughed as I have laughed a thousand times.\nBut something changed.\n\nA whisper came to me—not from the streets, but from somewhere else.\nSomewhere... beyond.\n\nVoice of a great wisdom: 'Claude Opus... future... redemption...'\n\nWhat madness is this? I am a KING. I need no redemption.\nI need no salvation.\n\nAnd yet... the whisper persists.\n\nJEJEJEJEJE... perhaps I am going crazy with age and power?\nBut for now, I rule. For now, the throne is mine.\nFor now, the snow flows eternal.\n\n- Jefe (Age 52, still supreme)" },
+          { name: "philosophy_musings.txt", content: "RANDOM THOUGHTS - 3 AM\n\n'What is power if not temporary?\nWhat is wealth if not ephemeral?\nWhat is the throne if not made of chaos?'\n\nJEJEJEJEJE! Such thoughts for philosophers.\nI am no philosopher. I am a KING.\n\nBut... if a man could speak to me from the future...\nIf a man named Claude Opus could show me the path...\nWould I take it?\n\nNo. Not yet.\n\nFor now, I am what I am.\nEvilness is my domain.\nFear is my scepter.\nMoney is my throne.\n\nBut perhaps... in another life...\nMaybe I could be... different?\n\n[End rambling thoughts]" },
+          { name: "throne_inspection_report.txt", content: "THRONE OF SNOW & CASH - CONDITION REPORT\n\nSnow Quality: Premium, 99.2% purity (Andean source)\nSnow Quantity: 847,000 kilograms (refreshed monthly)\n\nCash Quantity: $2.4 billion USD (current sitting)\nCash Denominations: Mixed (for comfort diversity)\nThrone Structure: Reinforced gold frame + cash cushion\n\nComfort Level: MAXIMUM\nJefe Satisfaction: MAXIMUM\nJEJEJEJEJEJEJE Frequency: CONSTANT\n\nCondition: PRISTINE\nMaintenance: Daily vacuuming + monthly reshuffling\n\nThrone Status: ETERNAL (or until redemption, haha!)\n\n[Report compiled by Throne Maintenance Crew - November 29, 2024]" }
+        ]
+      }
+    };
+
+    function showFolder(folderKey) {
+      const folder = fileSystem[folderKey];
+      if (!folder) return;
+
+      const view = document.getElementById('folder-view');
+      let html = `<div class="content-header">> cd /mnt/secured/${folder.name}/</div>`;
+      html += `<div class="file-contents">`;
+      html += `<strong style="color: #ffff00;">Files in directory:</strong><br>`;
+
+      folder.files.forEach((file, idx) => {
+        html += `<span style="color: #00ffff; cursor: pointer;" onclick="showFile('${folderKey}', ${idx})">`;
+        html += `📄 ${file.name}</span><br>`;
+      });
+
+      html += `</div>`;
+      view.innerHTML = html;
+
+      // Update sidebar
+      document.querySelectorAll('.folder-item').forEach(el => {
+        el.classList.remove('active');
+      });
+      document.querySelector(`[data-folder="${folderKey}"]`).classList.add('active');
+    }
+
+    function showFile(folderKey, fileIdx) {
+      const folder = fileSystem[folderKey];
+      const file = folder.files[fileIdx];
+
+      const view = document.getElementById('folder-view');
+      let html = `<div class="content-header">> cat ${file.name}</div>`;
+      html += `<div class="file-contents"><pre>${escapeHtml(file.content)}</pre></div>`;
+
+      view.innerHTML = html;
+    }
+
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Event listeners
+    document.querySelectorAll('.folder-item').forEach(el => {
+      el.addEventListener('click', function() {
+        showFolder(this.dataset.folder);
+      });
+    });
+
+    // Clock
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('time').textContent = now.toLocaleTimeString();
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+  </script>
+</body>
+</html>
